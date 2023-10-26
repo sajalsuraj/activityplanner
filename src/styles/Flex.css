@@ -1,0 +1,30 @@
+/* Flex related classes, inspired by TailwindCSS */
+.flex {
+  display: flex;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.align-center {
+  align-items: center;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.justify-end {
+  justify-content: flex-end;
+}
+
+.gap-10 {
+  gap: 10px;
+}
+
+/* Flex related classes section ends */

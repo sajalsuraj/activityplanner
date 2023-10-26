@@ -1,0 +1,9 @@
+h4 {
+  margin: 5px;
+}
+
+div.loading {
+  font-style: italic;
+  padding: 5px;
+  font-size: 12px;
+}

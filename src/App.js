@@ -1,23 +1,22 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import { Route, Routes } from "react-router-dom";
+import Header from "./components/common/Header";
+import Multistepform from "./components/pages/form/Form";
+import Activityplanner from "./components/pages/activityplanner/Activityplanner";
+// import { useMemo } from 'react';
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <div className="container">
+        <Header />
+        <div className="pageContainer">
+          <Routes>
+            <Route path="/" element={<Multistepform />} />
+            <Route path="/activities" element={<Activityplanner />} />
+          </Routes>
+        </div>
+      </div>
     </div>
   );
 }
