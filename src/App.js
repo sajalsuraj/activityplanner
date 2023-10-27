@@ -3,7 +3,6 @@ import { Route, Routes } from "react-router-dom";
 import Header from "./components/common/Header";
 import Multistepform from "./components/pages/form/Form";
 import Activityplanner from "./components/pages/activityplanner/Activityplanner";
-// import { useMemo } from 'react';
 
 function App() {
   return (

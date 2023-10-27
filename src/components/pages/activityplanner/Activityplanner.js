@@ -3,11 +3,20 @@ import "./../../../styles/Global.css";
 import List from "./components/List";
 import useParticipantsStore from "../../../hooks/useParticipantsStore";
 import { memo, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  API_BASE_URL,
+  checkIfDuplicateAvailable,
+  sortByPrice,
+} from "../../../helpers/Helper";
 
 function Activityplanner() {
-  const participants = useParticipantsStore((state) => state.participants);
+  const navigate = useNavigate();
+  const { participants, resetParticipants } = useParticipantsStore(
+    (state) => state
+  );
   const [activities, setActivities] = useState([]);
-  const [isActivityLoading, setIsActivityLoading] = useState(true);
+  const [isActivityLoading, setIsActivityLoading] = useState(false);
 
   async function getActivity(url) {
     try {
@@ -19,27 +28,17 @@ function Activityplanner() {
     }
   }
 
-  const checkIfDuplicateAvailable = (array, obj, keyToCheck) => {
-    const availableObjIndex = array.findIndex(
-      (itemObj) => itemObj[keyToCheck] === obj[keyToCheck]
-    );
-    if (availableObjIndex !== -1) {
-      return true;
-    }
-    return false;
-  };
-
   async function getActivities() {
     const activitiesData = [];
 
     function setActivities() {
       return getActivity(
-        "https://www.boredapi.com/api/activity?participants=" +
-          participants.length
+        `${API_BASE_URL}?participants=${participants.length}`
       ).then((activity) => {
         const manipulatedActivityData = {
           name: activity.activity + " - $" + activity.price,
           idx: activity.key,
+          price: activity.price,
         };
 
         if (
@@ -65,29 +64,50 @@ function Activityplanner() {
     return activitiesData;
   }
 
+  const handleResetButtonClick = () => {
+    resetParticipants();
+    navigate("/");
+  };
+
   useEffect(() => {
-    getActivities().then((activities) => {
-      setIsActivityLoading(false);
-      setActivities(activities);
-    });
+    if (participants && participants.length > 0) {
+      setIsActivityLoading(true);
+      getActivities().then((activities) => {
+        setIsActivityLoading(false);
+        setActivities(sortByPrice(activities));
+      });
+    }
   }, []);
 
   return (
     <div className="flex flex-col gap-10">
       <div>
-        <h4>Participants: </h4>
+        <div className="flex justify-between">
+          <h4>Participants: </h4>{" "}
+          <button
+            type="button"
+            onClick={() => handleResetButtonClick()}
+            className="btn-cancel"
+          >
+            Reset Participants
+          </button>
+        </div>
         {participants.length > 0 ? (
           <List listData={participants} />
         ) : (
-          "No participants found"
+          <div className="loading">No participants found</div>
         )}
       </div>
       <div>
         <h4>Activities: </h4>
-        {isActivityLoading && (
+        {activities && isActivityLoading && (
           <div className="loading">Activities are loading, please wait...</div>
         )}
         {activities && !isActivityLoading && <List listData={activities} />}
+
+        {activities.length < 1 && !isActivityLoading && (
+          <div className="loading">No activities found</div>
+        )}
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./Form.css";
 import "./../../../styles/Flex.css";
 import useParticipantsStore from "../../../hooks/useParticipantsStore";
@@ -6,12 +6,20 @@ import { useNavigate } from "react-router-dom";
 import ParticipantCountForm from "./components/Participantcount";
 import ParticipantsListEntryForm from "./components/Participantslistentry";
 
-export default function Multistepform() {
+function Multistepform() {
   const [page, setPage] = useState(0);
   const navigate = useNavigate();
 
   const { participants, addParticipants, resetParticipants } =
     useParticipantsStore((state) => state);
+
+  useEffect(() => {
+    if (participants && participants.length > 0) {
+      setPage(1);
+    } else {
+      setPage(0);
+    }
+  }, [participants]);
 
   const handleParticipantCountFormChange = (formEvent) => {
     formEvent.preventDefault();
@@ -44,9 +52,12 @@ export default function Multistepform() {
       {page === 1 && (
         <ParticipantsListEntryForm
           participants={participants}
+          onCancelForm={() => resetParticipants()}
           onFormSubmit={(event) => handleParticipantsListEntryFormChange(event)}
         />
       )}
     </div>
   );
 }
+
+export default Multistepform;

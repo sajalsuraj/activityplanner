@@ -1,9 +1,13 @@
 import { useForm, useFieldArray, Controller } from "react-hook-form";
 import useParticipantsStore from "../../../../hooks/useParticipantsStore";
-import { useCallback } from "react";
+import { memo, useCallback } from "react";
 import { debounce } from "../../../../helpers/Helper";
 
-const ParticipantsListEntryForm = ({ participants, onFormSubmit }) => {
+const ParticipantsListEntryForm = ({
+  participants,
+  onCancelForm,
+  onFormSubmit,
+}) => {
   const {
     control,
     formState: { isValid, errors },
@@ -25,7 +29,7 @@ const ParticipantsListEntryForm = ({ participants, onFormSubmit }) => {
     debounce(
       (participant, inputValue) =>
         updateParticipantName(participant, inputValue),
-      500
+      250
     ),
     []
   );
@@ -84,8 +88,11 @@ const ParticipantsListEntryForm = ({ participants, onFormSubmit }) => {
           );
         })}
 
-        <div className="flex justify-center">
-          <button disabled={!isValid} type="submit">
+        <div className="flex justify-center gap-10">
+          <button onClick={onCancelForm} className="btn-cancel" type="button">
+            Cancel
+          </button>
+          <button className="btn-submit" disabled={!isValid} type="submit">
             Submit
           </button>
         </div>
@@ -94,4 +101,4 @@ const ParticipantsListEntryForm = ({ participants, onFormSubmit }) => {
   );
 };
 
-export default ParticipantsListEntryForm;
+export default memo(ParticipantsListEntryForm);

@@ -7,3 +7,7 @@ div.loading {
   padding: 5px;
   font-size: 12px;
 }
+
+.text-right {
+  text-align: right;
+}
