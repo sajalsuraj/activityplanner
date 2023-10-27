@@ -1,20 +1,19 @@
 import { useForm, useFieldArray, Controller } from "react-hook-form";
-import useParticipantsStore from "../../../../hooks/useParticipantsStore";
-import { memo, useCallback } from "react";
-import { debounce } from "../../../../helpers/Helper";
+import { memo, useState } from "react";
 
 const ParticipantsListEntryForm = ({
   participants,
   onCancelForm,
   onFormSubmit,
 }) => {
+  const [clonedParticipants, setClonedParticipants] = useState(participants); //Cloning participants array to avoid mutation in original array
   const {
     control,
     formState: { isValid, errors },
   } = useForm({
     mode: "onChange",
     defaultValues: {
-      participants: participants,
+      participants: clonedParticipants,
     },
   });
 
@@ -23,25 +22,30 @@ const ParticipantsListEntryForm = ({
     name: "participants",
   });
 
-  const { updateParticipantName } = useParticipantsStore((state) => state);
-
-  const debounceUpdateParticipantName = useCallback(
-    debounce(
-      (participant, inputValue) =>
-        updateParticipantName(participant, inputValue),
-      250
-    ),
-    []
-  );
-
-  const handleInputChange = (inputValue, participant) => {
-    debounceUpdateParticipantName(participant, inputValue);
+  // To update the state of every name field
+  const updateParticipantName = (currentParticipant, updatedName) => {
+    setClonedParticipants((prevState) => {
+      return prevState.map((participant) =>
+        currentParticipant.idx === participant.idx
+          ? { ...currentParticipant, name: updatedName }
+          : participant
+      );
+    });
   };
 
+  // Input change handler
+  const handleInputChange = (inputValue, participant) => {
+    updateParticipantName(participant, inputValue);
+  };
+
+  /** Rendering the dynamic form with participants name fields */
   return (
     <div className="form">
-      <p>No. of participants: {participants.length}</p>
-      <form className="flex flex-col gap-10" onSubmit={onFormSubmit}>
+      <p>No. of participants: {clonedParticipants.length}</p>
+      <form
+        className="flex flex-col gap-10"
+        onSubmit={(e) => onFormSubmit(e, clonedParticipants)}
+      >
         {fields.map((participant, index) => {
           return (
             <div key={participant.idx}>
@@ -68,10 +72,6 @@ const ParticipantsListEntryForm = ({
                     placeholder={`Enter participant ${
                       participant.idx + 1
                     } name`}
-                    onChange={(e) => {
-                      field.onChange(e);
-                      handleInputChange(field.value, participant);
-                    }}
                     onBlur={(e) => {
                       field.onChange(e);
                       handleInputChange(field.value, participant);

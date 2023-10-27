@@ -1,15 +1,6 @@
 export const API_BASE_URL = "https://www.boredapi.com/api/activity";
 
-export const debounce = (func, delay) => {
-  let debounceTimer;
-  return function () {
-    const context = this;
-    const args = arguments;
-    clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(() => func.apply(context, args), delay);
-  };
-};
-
+// Returns a boolean value when a duplicate entry found in an array
 export const checkIfDuplicateAvailable = (array, obj, keyToCheck) => {
   const availableObjIndex = array.findIndex(
     (itemObj) => itemObj[keyToCheck] === obj[keyToCheck]
@@ -20,6 +11,7 @@ export const checkIfDuplicateAvailable = (array, obj, keyToCheck) => {
   return false;
 };
 
+// Sorting in ascending order based on price
 export const sortByPrice = (array) => {
   return [...array].sort((a, b) => a.price - b.price);
 };

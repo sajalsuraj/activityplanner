@@ -1,19 +1,13 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
+// Creating store to handle participants data
 const participantsStore = (set) => ({
   participants: [],
   addParticipants: (participant) =>
     set((state) => ({ participants: [...state.participants, participant] })),
-  updateParticipantName: (currentParticipant, updatedName) =>
-    set((state) => {
-      let updatedParticipants = state.participants.map((participant) =>
-        currentParticipant.idx === participant.idx
-          ? { ...currentParticipant, name: updatedName }
-          : participant
-      );
-      return { participants: updatedParticipants };
-    }),
+  updateParticipants: (updatedParticipantsData) =>
+    set({ participants: updatedParticipantsData }),
   resetParticipants: () => set({ participants: [] }),
 });
 
